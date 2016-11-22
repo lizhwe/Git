@@ -1,0 +1,134 @@
+
+123456789
+
+1.给本机添加用户名和邮箱：
+	git cnofig --global user.name "用户名"
+	git config --global user.email "邮箱"	
+
+2.将目录变成git可管理的仓库(进入该目录)：  git init
+
+3.所有的版本控制系统，只能跟踪文本文件的改动，比如txt文件，网页，所有程序的代码等，Git也不列外，版本控制系统可以告诉你每次的改动，但是图片，视频这些二进制文件，虽能也能由版本控制系统管理，但没法跟踪文件的变化，只能把二进制文件每次改动串起来，也就是知道图片从1kb变成2kb，但是到底改了啥，版本控制也不知道。
+
+4.fatal: pathspec 'readme.txt' did not match any files
+说明该目录下没有该文件，需要创建：
+	3.1 通过界面管理来创建
+	3.2 使用git命令创建 touch readme.txt
+
+4.将文件添加到版本库中：  
+	5.1 将文件添加到暂存区中：git add readme.txt
+	5.2 把文件提交到仓库中： git commit -m  'readme.txt提交'  
+		注意：引号内为提交的注释（readme.txt提交）。
+	5.3 查看是否文件提交状况： git status
+	5.4 查看文件具体修改的内容： git diff readme.txt
+	注意：在执行提交之前应先使用git status 来确定状态，当修改文件并提交完成后，再次确认状态。
+
+6.确认数据库的提交记录： 
+	6.1 显示详细信息： git log
+	6.2 显示修改的版本号和显示提交修改信息：git log --pretty=oneline 
+
+7.版本回退：
+	7.1 回退到上一个版本：	git reset --hard HEAD^
+	7.2 回退到上上个版本：  git reset --hard HEAD^^
+	7.2 回退到前50个版本：  git reset --hard HEAD~50
+	
+8.获取版本号： git reflog
+
+9.恢复版本号： git reset --hard 版本号
+
+10.理解工作区与暂存区的区别？
+
+     工作区：就是你在电脑上看到的目录，比如目录下123文件夹里的文件(.git隐藏目录版本库除外)。或者以后需要再新建的目录文件等等都属于工作区范畴。
+      版本库(Repository)：工作区有一个隐藏目录.git,这个不属于工作区，这是版本库。其中版本库里面存了很多东西，其中最重要的就是stage(暂存区)，还有Git为我们自动创建了第一个分支master,以及指向master的一个指针HEAD。
+
+我们前面说过使用Git提交文件到版本库有两步：
+
+  第一步：是使用 git add 把文件添加进去，实际上就是把文件添加到暂存区。
+
+  第二步：使用git commit提交更改，实际上就是把暂存区的所有内容提交到当前分支上。
+
+11.显示当前文件内容并显示行号： cat -n readme.txt
+
+12.同时显示当前目录下的两个文件： cat readme_01.txt readme_02.txt
+
+13.将两个文件内容合并并输出到第三个文件中显示：cat a.txt b.txt > c.txt
+
+14. 从键盘输入信息到文件d.txt中(回车后按Ctrl+D)： cat > d.txt
+
+15. 撤销修改：
+	15.1 可以先删除文件，add到暂存区，最后commit
+	15.2 使用git reset --hard HEAD^ 版本恢复
+	15.3 直接撤销： git checkout -- readme.txt   注意：把readme.txt文件放在工作区做的修改全部撤销，这里有两种情况，如下：
+	1.readme.txt自动修改后，还没有放到暂存区中，使用撤销修改就回到和版本库中一模一样的状态。
+	2.readme.txt已经放入暂存区了，接着又做了修改，撤销修改就回到了添加暂存区后的状态。
+	根据以下命令进行操作：
+		cat lizhiwei.txt
+		git add lizhiwei.txt
+		vi lizhiwei.txt
+		cat lizhiwei.txt
+		git checkout -- lizhiwei.txt
+	注意：命令git checkout -- lizhiwei.txt中的 -- 很重要，若没有--，那么命令将会变成创建分支了。
+
+16.删除文件：
+	16.1 可在图形化界面删除
+	16.2 使用命令删除： rm a.txt
+	16.3 若想在版本库中删掉此文件的话，可以再次执行commit
+	16.4 若还未commit，那么我想恢复删除的文件该如何操作？
+		16.4.1 git checkout -- a.txt 
+
+
+17.远程仓库：
+	17.1 需在用户主目录下生成SSH Key,在git中执行： ssh-keygen -t rsa -C "github账号绑定的邮箱"
+	
+	17.2 在GitHub中创建新的仓库（新建是内容为空），可以在这个仓库克隆出新的仓库，也可以把一个已有的本地仓库与之关联，然后将本地仓库的内容推送到远程仓库： 
+	1关联： git remote add origin https://github.com.lizhwe/testgit.git 
+	2推送内容： git push -u origin master   注意：这里使用了-u参数，不但会把本地的master分支内容推送到远程的master分支上，还会把本地的master分支和远程的master分支进行关联，在以后的推送或拉取就可以简化命令。
+	3.本地master提交推送更新到远程master上： git push origin master
+	
+	17.3 如何从远程库克隆？
+		git clone https://github.com.lizhwe/远程库名称
+	
+18.创建与合并分支
+	18.1 在版本回填退里，你已经知道，每次提交，Git都把它们串成一条时间线，这条时间线就是一个分支。截止到目前，只有一条时间线，在Git里，这个分支叫主分支，即master分支。HEAD严格来说不是指向提交，而是指向master，master才是指向提交的，所以，HEAD指向的就是当前分支。
+	18.2 创建分支并切换分支： git checkout -b 分支名称
+		等价于以下两个命令：
+			创建分支： git branch dev
+			切换分支： git checkout dev
+	18.3 查看当前分支： git branch
+	18.4 合并指定分支到当前分支上： git merge 分支名称
+	18.5 删除分支： git branch -d 分支名称
+	
+
+19.解决冲突
+	git commit -m "conflict fixed"
+	查看修改记录或分支合并情况信息：git log
+
+20.分支管理策略：
+	
+	通常合并分支时，git一般使用”Fast forward”模式，在这种模式下，删除分支后，会丢掉分支信息，现在我们来使用带参数 –no-ff来禁用”Fast forward”模式。
+	
+	分支策略：首先master主分支应该是非常稳定的，也就是用来发布新版本，一般情况下不允许在上面干活，干活一般情况下在新建的dev分支上干活，干完后，比如上要发布，或者说dev分支代码稳定后可以合并到主分支master上来。
+
+21.bug分支：
+	在开发中，会经常碰到bug问题，那么有了bug就需要修复，在Git中，分支是很强大的，每个bug都可以通过一个临时分支来修复，修复完成后，合并分支，然后将临时的分支删除掉。
+	
+
+22.多人协作
+	22.1 查看远程库信息：git remote
+	22.2 查看远程库的详细信息： git remote -v
+	22.3 推送分支：把该分支上的所有内容推送提交到远程库中：
+		git push origin 分支名称
+	22.4 那么一般情况下，那些分支要推送呢？
+		1. master分支是主分支，因此要时刻与远程同步。
+		2. 一些修复bug分支不需要推送到远程去，可以先合并到主分支上，然后把主分支master推送到远程去
+	
+
+
+
+
+
+
+
+
+
+
+
